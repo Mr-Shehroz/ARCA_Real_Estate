@@ -141,6 +141,85 @@
       type="image/x-icon"
     />
     <script src="/_next/static/chunks/0cz1d0mv5g_q7.js" nomodule=""></script>
+
+    <!-- File: site/index.html — paste just before </head> (new code, header fix) -->
+    <style id="ah-header-fix">
+      nav.fixed {
+        transition:
+          transform 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+          background-color 0.4s ease,
+          color 0.4s ease,
+          box-shadow 0.4s ease;
+      }
+      html[data-ah-header="top"] nav.fixed {
+        mix-blend-mode: normal !important;
+        color: #fff !important;
+        background: transparent;
+      }
+      html[data-ah-header="hidden"] nav.fixed {
+        transform: translateY(-110%);
+      }
+      html[data-ah-header="solid"] nav.fixed {
+        mix-blend-mode: normal !important;
+        color: #2a2725 !important;
+        background: rgba(237, 230, 214, 0.94);
+        -webkit-backdrop-filter: blur(12px);
+        backdrop-filter: blur(12px);
+        box-shadow: 0 1px 0 rgba(42, 39, 37, 0.08);
+      }
+    </style>
+    <script id="ah-header-js">
+      (function () {
+        var d = document.documentElement,
+          last = 0,
+          tick = false;
+        function isOpen() {
+          var b = document.querySelector(
+            'nav.fixed button[aria-controls="site-menu"]',
+          );
+          return b && b.getAttribute("aria-expanded") === "true";
+        }
+        function update() {
+          tick = false;
+          var y = window.scrollY || d.scrollTop,
+            h = window.innerHeight,
+            s = d.getAttribute("data-ah-header") || "top";
+          if (isOpen()) {
+            s = y < h * 0.6 ? "top" : "solid";
+          } else if (y < 10) {
+            s = "top";
+          } else if (y > last + 4 && y > 120) {
+            s = "hidden";
+          } else if (y < last - 4) {
+            s = y < h * 0.6 ? "top" : "solid";
+          }
+          if (d.getAttribute("data-ah-header") !== s)
+            d.setAttribute("data-ah-header", s);
+          last = y;
+        }
+        function req() {
+          if (!tick) {
+            tick = true;
+            requestAnimationFrame(update);
+          }
+        }
+        d.setAttribute("data-ah-header", "top");
+        window.addEventListener("scroll", req, { passive: true });
+        window.addEventListener("resize", req);
+        document.addEventListener(
+          "click",
+          function () {
+            setTimeout(req, 60);
+          },
+          true,
+        );
+        setInterval(function () {
+          if (!d.getAttribute("data-ah-header"))
+            d.setAttribute("data-ah-header", "top");
+          req();
+        }, 800);
+      })();
+    </script>
   </head>
   <body class="min-h-full flex flex-col">
     <div hidden=""><!--$--><!--/$--></div>
